@@ -6,3 +6,4 @@ langchain-chroma==1.1.0
 chromadb==1.5.9
 python-dotenv==1.2.3
 gitpython==3.1.62
+streamlit==1.32.0

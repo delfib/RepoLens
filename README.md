@@ -1,64 +1,88 @@
-# RepoLens 🔍
+# RepoLens
 
-**RepoLens** is an intelligent Retrieval-Augmented Generation (RAG) tool designed to help developers explore, understand, and question a GitHub codebases. It clones a given repository, indexes its source code files using Gemini embeddings, and provides an interactive CLI chat session powered by Google's Gemini models.
+**RepoLens** is a RAG-powered developer assistant designed to help developers explore, understand, and question GitHub codebases. It clones a given repository, indexes its source code files using Gemini embeddings, and provides an interactive chat session.
 
 ---
 
-## Features
+### Features
 
-* Clones public GitHub repositories into a local environment automatically.
-* Filters and splits common source code and configuration extensions (`.py`, `.js`, `.ts`, `.java`, `.go`, `.json`, etc.) into manageable context chunks.
-* Generates semantic embeddings and stores them in a local vector database.
-* Answers queries strictly based on the retrieved code snippets.
+- **GitHub Repository Analysis:** clone and index a repository directly from its GitHub URL.
+- **Codebase Q&A:** ask natural-language questions about the indexed repository.
+- **RAG-powered Retrieval:** retrieve relevant code fragments before generating an answer.
+- **Adjustable Retrieval:** experiment with the number of code fragments retrieved for each question.
+- **Web Interface:** interactive Streamlit interface for indexing repositories and chatting with RepoLens.
 
 ---
 
 ## Tech Stack
 
-* **Language**: Python 3.10+
-* **LLM & Embeddings**: Google Gemini API via `langchain-google-genai`
-* **Orchestration**: LangChain Expression Language (LCEL)
-* **Vector Store**: ChromaDB (`langchain-chroma`)
-* **Git Operations**: GitPython
+- [Python](https://www.python.org/)
+- [Streamlit](https://streamlit.io/)
+- [LangChain](https://www.langchain.com/)
+- [Google Gemini](https://ai.google.dev/)
+- [ChromaDB](https://www.trychroma.com/)
+- [GitPython](https://gitpython.readthedocs.io/)
 
 ---
 
-## Prerequisites
+## Getting Started
+
+### Prerequisites
 
 * **Python**: Version 3.10 or higher installed.
-* **Git**: Installed and accessible from your system PATH.
+* **Git**
 * **Google Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/).
 
 ---
 
-## Installation & Setup
+### Installation
 
-### Set up a virtual environment
+1. Set up a virtual environment
 ```bash
 python3 -m venv venv
 source venv/bin/activate 
 ```
 
-### Install dependencies
+2. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### Configure environment variables
-Create a .env file in the root directory and add your Google API key:
+3. Create a .env file in the root directory and add your Google API key:
 ```bash
 GOOGLE_API_KEY=your_gemini_api_key_here
 ```
 
+4. Run the Application
+```bash
+streamlit run src/app.py
+```
+Streamlit will provide a local URL where you can access the RepoLens web interface.
+
 ---
 
-## Usage
-### Launch the interactive CLI
+### Usage
+1. Enter a public GitHub repository URL in the sidebar.
+2. Wait for the repository to be processed and indexed.
+3. Ask questions about the repository using the chat interface.
+4. Use the Number of code fragments slider to experiment with retrieval.
 
-```bash
-python3 src/app.py
-```
 
 When prompted, enter a valid public GitHub repository URL. Ask questions about the repository.
 
 Type `exit` or `quit` to end the session and automatically clean up temporary files.
+
+---
+
+### Experimenting with Retrieval
+RepoLens allows you to change the number of code fragments retrieved for each question using the `k` parameter.
+The Streamlit interface allows you to select a value between 1 and 10.
+Changing `k` changes how much relevant code is provided to Gemini when answering a question:
+
+* Lower values provide less code context.
+* Higher values provide more code context.
+* Different values may produce different answers depending on the question and repository.
+
+Try asking the same question with different k values to compare the results.
+
+
