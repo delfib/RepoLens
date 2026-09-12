@@ -1,11 +1,10 @@
-import sys
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
-from src.ingest import clone_repository, load_and_split_documents, build_vector_store, clear_session_data
+from ingest import clone_repository, load_and_split_documents, build_vector_store, clear_session_data
 
 load_dotenv()
 
@@ -26,7 +25,7 @@ def main():
         vector_store = build_vector_store(chunks)
 
         retriever = vector_store.as_retriever(search_kwargs={"k": 4})
-        llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.2)
+        llm = ChatGoogleGenerativeAI(model="gemini-3.6-flash")
 
         template = """Answer the question based ONLY on the following retrieved code snippets.
         If you do not know the answer or if it isn't in the code context, state that you cannot find it in the codebase.
@@ -40,7 +39,18 @@ def main():
         prompt = ChatPromptTemplate.from_template(template)
 
         def format_docs(docs):
-            return "\n\n--- Code Snippet ---\n" + "\n\n".join(doc.page_content for doc in docs)
+            formatted = []
+
+            for doc in docs:
+                source = doc.metadata.get("source", "unknown file")
+
+                formatted.append(
+                    f"--- Code Snippet ---\n"
+                    f"File: {source}\n\n"
+                    f"{doc.page_content}"
+                )
+
+            return "\n\n".join(formatted)
 
         # Build LangChain RAG Chain
         rag_chain = (
