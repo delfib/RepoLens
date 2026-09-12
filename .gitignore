@@ -1,0 +1,22 @@
+# Environment Variables
+.env
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python Cache & Artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Local Chroma Database & Cloned Repositories
+.chroma_db/
+temp_repos/
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+.DS_Store
