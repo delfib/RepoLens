@@ -14,7 +14,7 @@
 
 ---
 
-## Tech Stack
+### Tech Stack & Technologies
 
 - [Python](https://www.python.org/)
 - [Streamlit](https://streamlit.io/)
