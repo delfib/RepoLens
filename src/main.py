@@ -8,6 +8,20 @@ from ingest import clone_repository, load_and_split_documents, build_vector_stor
 
 load_dotenv()
 
+def format_docs(docs):
+            formatted = []
+
+            for doc in docs:
+                source = doc.metadata.get("source", "unknown file")
+
+                formatted.append(
+                    f"--- Code Snippet ---\n"
+                    f"File: {source}\n\n"
+                    f"{doc.page_content}"
+                )
+
+            return "\n\n".join(formatted)
+
 def main():
     print("=" * 60)
     print(" Welcome to RepoLens ")
@@ -37,20 +51,6 @@ def main():
         Answer:"""
 
         prompt = ChatPromptTemplate.from_template(template)
-
-        def format_docs(docs):
-            formatted = []
-
-            for doc in docs:
-                source = doc.metadata.get("source", "unknown file")
-
-                formatted.append(
-                    f"--- Code Snippet ---\n"
-                    f"File: {source}\n\n"
-                    f"{doc.page_content}"
-                )
-
-            return "\n\n".join(formatted)
 
         # Build LangChain RAG Chain
         rag_chain = (
@@ -82,6 +82,7 @@ def main():
         print(f"\n An error occurred: {e}")
     finally:
         clear_session_data()
+
 
 if __name__ == "__main__":
     main()

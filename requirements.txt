@@ -4,5 +4,5 @@ langchain-google-genai==4.4.0
 google-genai==2.23.0
 langchain-text-splitters==1.1.2
 chromadb==1.5.9
-python-dotenv
-gitpython
+python-dotenv==1.2.3
+gitpython==3.1.62
