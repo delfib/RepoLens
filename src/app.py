@@ -4,7 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
-from ingest import clone_repository, load_and_split_documents, build_vector_store, clear_session_data
+from indexer import clone_repository, load_and_split_documents, build_vector_store, clear_session_data
 
 load_dotenv()
 
