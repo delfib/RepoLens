@@ -1,10 +1,10 @@
 import os
 import shutil
 import git
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -25,29 +25,42 @@ def clone_repository(repo_url: str) -> str:
 
 def load_and_split_documents(repo_path: str):
     """Loads text/code files from the repo and splits them into chunks"""
+
     print(" Parsing repository codebase...")
-    
-    supported_extensions = [
-        "**/*.py", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx",
-        "**/*.java", "**/*.md", "**/*.go", "**/*.rb", "**/*.c",
-        "**/*.cpp", "**/*.cs", "**/*.json", "**/*.yaml", "**/*.txt"
-    ]
-    
+
+    supported_extensions = {
+        ".py", ".js", ".jsx", ".ts", ".tsx",
+        ".java", ".md", ".go", ".rb", ".c",
+        ".cpp", ".cs", ".json", ".yaml", ".yml",
+        ".txt",
+    }
+
     documents = []
 
-    for glob_pattern in supported_extensions:
-        loader = DirectoryLoader(
-            repo_path,
-            glob=glob_pattern,
-            loader_cls=TextLoader,
-            loader_kwargs={"encoding": "utf-8"},
-            silent_errors=True  # Silently skip unreadable or binary files
-        )
-        documents.extend(loader.load())
+    for root, _, files in os.walk(repo_path):
+        for filename in files:
+            extension = os.path.splitext(filename)[1].lower()
+
+            if extension not in supported_extensions:
+                continue
+
+            file_path = os.path.join(root, filename)
+
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+
+                documents.append(
+                    Document(
+                        page_content=content, metadata={"source": file_path, "file_name": filename},
+                    )
+                )
+
+            except (UnicodeDecodeError, OSError):
+                continue
 
     print(f" Found {len(documents)} source files.")
 
-    # Split documents into ~500 character chunks with 50 character overlap
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1200, chunk_overlap=150)
     chunks = text_splitter.split_documents(documents)
 
